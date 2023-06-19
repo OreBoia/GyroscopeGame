@@ -10,6 +10,9 @@ public class GyroScopeTest : MonoBehaviour
     private float borderSize = 0f;
     public TextMeshProUGUI text;
 
+
+    private Rigidbody2D rb;
+
     private void Awake() 
     {
         Screen.autorotateToPortrait = false;
@@ -17,68 +20,20 @@ public class GyroScopeTest : MonoBehaviour
         Screen.autorotateToLandscapeLeft = false;
         Screen.autorotateToLandscapeRight = false;
         Screen.orientation = ScreenOrientation.Portrait;
+
+        rb = GetComponent<Rigidbody2D>();
     }
 
     void Start()
     {
-        if(SystemInfo.supportsGyroscope)
-        {
-            gyroscope = Input.gyro;
-            gyroscope.enabled = true;
-        }
-        else
-        {
-            Debug.Log("Gyroscope not supported on this device.");
-        }
+
     }
 
     void Update()
     {
-        if(gyroscope != null)
-        {
-            Vector3 rotationRate = gyroscope.rotationRate; 
 
-            //update text
-            text.text = rotationRate.ToString();
-            
-            // transform.Rotate(rotationRate.y, rotationRate.x, 0);
-
-            transform.position += rotationRate.normalized * speed;
-        }
-
-
-
-        // Clamp();
-    }
-
-    private void Clamp()
-    {
-        Vector3 playerScreenPosition = Camera.main.WorldToScreenPoint(transform.position);
-        Vector3 clampedPosition = transform.position;
-
-        float borderWidth = 50f;
-        float borderX = Mathf.Clamp(clampedPosition.x, borderWidth, Screen.width - borderWidth);
-        float borderY = Mathf.Clamp(clampedPosition.y, borderWidth, Screen.height - borderWidth);
-
-        if (playerScreenPosition.x <= borderWidth)
-        {
-            clampedPosition.x += playerScreenPosition.x - borderWidth;
-        }
-        else if (playerScreenPosition.x >= Screen.width - borderWidth)
-        {
-            clampedPosition.x += playerScreenPosition.x - (Screen.width - borderWidth);
-        }
-
-        if (playerScreenPosition.y <= borderWidth)
-        {
-            clampedPosition.y += playerScreenPosition.y - borderWidth;
-        }
-        else if (playerScreenPosition.y >= Screen.height - borderWidth)
-        {
-            clampedPosition.y += playerScreenPosition.y - (Screen.height - borderWidth);
-        }
-
-        transform.position = clampedPosition;
-
+        text.text = Input.acceleration.ToString();
+        rb.velocity = (Vector2) Input.acceleration.normalized * speed;
+        
     }
 }
